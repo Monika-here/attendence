@@ -50,4 +50,53 @@ class App extends CI_Controller {
 		$this->load->view('employee/list', $this->data);
 	}
 
+	public function edit_employee($id = FALSE)
+	{
+		if($id === FALSE)redirect(base_url('list_employees/'));
+		$this->data['input']['id'] = $id;
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->form_validation->set_rules('name', 'Employee Name', 'required');
+		$this->form_validation->set_rules('status', 'Employee Status', 'required');
+
+		$this->data['employee'] = $this->app_model->get_table_row('employees', 'id', id_encrypt_decrypt($this->data['input']['id'],'decrypt'));
+		if(!$this->data['employee'])redirect(base_url('list_employees/'));
+
+		if ($this->form_validation->run() === TRUE)
+		{
+			$edit_input = $this->input->post();
+			$edit_input['id'] = $this->data['employee']['id'];
+
+			if($this->app_model->edit_employee($edit_input)){
+				$this->session->set_flashdata('success', 'Employee Details Updated!');
+				$this->form_validation->reset_validation();
+				redirect(base_url('list_employees/'));
+			}else{
+				$this->session->set_flashdata('error', 'Error updating employee details! Try again!');
+				redirect(base_url('edit_employee/'.$id.'/'));
+			}
+		}
+		$this->data['slug'] = 'edit_employee';
+		$this->data['page_title'] = 'Edit Employee';
+
+		$this->load->view('employee/edit', $this->data);
+	}
+
+	public function delete_employee($id = FALSE)
+	{
+		if($id === FALSE)redirect(base_url('list_employees/'));
+
+		$this->data['employee'] = $this->app_model->get_table_row('employees', 'id', id_encrypt_decrypt($id,'decrypt'));
+
+		if($this->data['employee']){
+			if($this->app_model->delete_table_row('employees', 'id', $this->data['employee']['id'])){
+				$this->session->set_flashdata('success', 'Employee "'.$this->data['employee']['name'].'" Deleted!');
+				redirect(base_url('list_employees/'));
+			}
+		}
+		$this->session->set_flashdata('error', 'Error deleting employee! Try again!');
+		redirect(base_url('list_employees/'));
+	}
+
+
 }

@@ -89,4 +89,37 @@ class App_model extends CI_Model {
       return intval($_result['count']);
     }return FALSE;
   }
+
+  public function edit_employee($input = array())
+  {
+    if(!isset($input['id']) || empty($input['id']))return FALSE;
+    $data = array(
+      'name' => htmlspecialchars($input['name']),
+      'email' => (isset($input['email']) && !empty($input['email'])) ? $input['email'] : NULL,
+      'mobile' => (isset($input['mobile']) && !empty($input['mobile'])) ? $input['mobile'] : '',
+      'status' => htmlspecialchars($input['status']),
+      'updated_date' => date("Y-m-d H:i:s"),
+    );
+    return $this->update_table_row('employees',array('id' => $input['id']),$data, 1);
+  }
+
+  public function update_table_row($table, $_search_by_array = array(), $_data = array(), $_limit = FALSE){
+    if(empty($_search_by_array) || empty($_data))return FALSE;
+    $_data['updated_date'] = date("Y-m-d H:i:s");
+    $this->db->set($_data);
+    $this->db->where($_search_by_array);
+    $this->db->update($table);
+    if($_limit){$this->db->limit($_limit);}
+    if($this->db->affected_rows() > 0){
+      return $_search_by_array;
+    }return FALSE;
+  }
+
+  public function delete_table_row($table, $search_by, $id){
+    if($id === FALSE)return FALSE;
+    $this->db->set('deleted', '1');
+    $this->db->set('deleted_date', date("Y-m-d H:i:s"));
+    $this->db->where($search_by, $id);
+    return $this->db->update($table);
+  }
 }

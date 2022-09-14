@@ -32,3 +32,11 @@
       })
     }
   });
+  
+  $('#deleteModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var _id = button.data('id');var _name = button.data('name');var _link = button.data('link');
+    var modal = $(this);
+    $(this).find('.modal-footer .delete-btn').attr('href', _base_url+_link);
+    $(this).find('.modal-body .item-title').html('"'+_name+'"');
+  });
