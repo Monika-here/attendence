@@ -47,7 +47,7 @@
           <div class="col-6">
             <div class="form-group">
               <label for="status" class="col-form-label">Status</label>
-              <?php echo form_dropdown('status', array('active' => 'Active','in_active' => 'In-Active'), '1', 'id="employee_status" class="form-control" data-placeholder="Select Status" required="required"'); ?>
+              <?php echo form_dropdown('status', array('active' => 'Active','in_active' => 'In-Active'), '1', 'id="employee_status" class="wc_dd form-control" data-placeholder="Select Status" required="required"'); ?>
             </div>
           </div>
 
