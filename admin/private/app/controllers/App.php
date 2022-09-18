@@ -6,17 +6,16 @@ class App extends CI_Controller {
 	public function __construct()
 	{
 	  parent::__construct();
-	  $this->load->model('app_model');
 		$this->load->library('session');
-		$this->load->helper(array('url_helper','support_helper'));
+	  $this->load->model('app_model');
+		$this->load->library('form_validation');
+		$this->load->helper(array('url_helper','support_helper','form'));
 		$this->data['title'] = 'Admin Dashboard';
 		$this->data['version_assets'] = rand(1, 30000);/*HELP TO DEBUG LOCALLY*/
 	}
 
 	public function add_employee()
 	{
-		$this->load->helper('form');
-		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name', 'Employee Name', 'required');
 		$this->form_validation->set_rules('status', 'Status', 'required');
 		if($this->form_validation->run() === TRUE)
@@ -39,8 +38,6 @@ class App extends CI_Controller {
 
 	public function list_employees($page_no = 1)
 	{
-		$this->load->helper('form');
-		$this->load->library('form_validation');
 		if(intval($page_no) < 1)$page_no = 1;
 		$this->data['slug'] = 'list_employees';
 		$this->data['page_title'] = 'All Employees';
@@ -54,8 +51,6 @@ class App extends CI_Controller {
 	{
 		if($id === FALSE)redirect(base_url('list_employees/'));
 		$this->data['input']['id'] = $id;
-		$this->load->helper('form');
-		$this->load->library('form_validation');
 		$this->form_validation->set_rules('name', 'Employee Name', 'required');
 		$this->form_validation->set_rules('status', 'Employee Status', 'required');
 
@@ -98,5 +93,24 @@ class App extends CI_Controller {
 		redirect(base_url('list_employees/'));
 	}
 
+	public function list_attendence($page_no = 1)
+	{
+		if(intval($page_no) < 1)$page_no = 1;
+		$this->data['slug'] = 'list_attendence';
+		$this->data['page_title'] = 'Today\'s Attendence';
+		$this->data['employees'] = $this->app_model->todays_attendence($page_no);
+		$this->load->view('pages/attendence', $this->data);
+	}
 
+	public function employee_attendence($id = FALSE)
+	{
+		if($id === FALSE)redirect(base_url('list_employees/'));
+		$this->data['slug'] = 'employee_attendence';
+		$this->data['page_title'] = 'Current Month Attendence';
+		$this->data['input']['id'] = $id;
+		$this->data['employee_details'] = $this->app_model->get_table_row('employees', 'id', id_encrypt_decrypt($this->data['input']['id'],'decrypt'));
+		if(!$this->data['employee_details'])redirect(base_url('list_employees/'));
+		$this->data['employee'] = $this->app_model->get_query_result("select a.id,a.name,a.mobile,a.email,b.status,b.sign_in from employees as a left join attendence as b on a.id=b.emp_id where a.id=".$this->data['employee_details']['id']." and a.deleted=0 and month(sign_in) =".date("m").' and YEAR(sign_in) = '.date("Y"));
+		$this->load->view('employee/attendence', $this->data);
+	}
 }

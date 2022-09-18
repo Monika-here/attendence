@@ -22,7 +22,7 @@
       <li class="nav-item">
         <a class="nav-link <?= ($slug == 'list_attendence') ? 'active' : '' ?>" href="<?= base_url('list_attendence/') ?>">
           <span data-feather="list"></span>
-          List Employee Attendence
+          Today's Attendence
         </a>
       </li>
     </ul>
