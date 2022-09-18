@@ -2,7 +2,7 @@
   <div class="sidebar-sticky pt-3">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link <?= ($slug == 'dashboard') ? 'active' : '' ?>" href="<?= base_url('dashboard/') ?>">
+        <a class="nav-link <?= ($slug == 'dashboard') ? 'active' : '' ?>" href="<?= base_url() ?>">
           <span data-feather="home"></span>
           Dashboard <span class="sr-only">(current)</span>
         </a>

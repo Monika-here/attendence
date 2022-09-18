@@ -13,6 +13,15 @@ class App extends CI_Controller {
 		$this->data['title'] = 'Admin Dashboard';
 		$this->data['version_assets'] = rand(1, 30000);/*HELP TO DEBUG LOCALLY*/
 	}
+	public function index()
+	{
+
+		$this->data['slug'] = 'dashboard';
+		$this->data['page_title'] = 'Dashboard';
+		$this->data['employees_count'] = $this->app_model->table_count_by_query('select count(*) as count from employees where deleted=0');
+		$this->data['todays_attendence_count'] = $this->app_model->table_count_by_query('select count(*) as count from attendence where Date(sign_in)=CURDATE()');
+		$this->load->view('pages/dashboard', $this->data);
+	}
 
 	public function add_employee()
 	{
